@@ -1,7 +1,9 @@
 # IT342-SwiftThrift
 # **Team Members:**
 **Member2**
-**Name**: *Redgel Gregory G. Mefania *
+<br>
+**Name**: *Redgel Gregory G. Mefania*
+<br>
 **Course and Year**: *BSIT-3*
 
 ## **About Myself**
