@@ -6,38 +6,34 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productId;
+    private int productId;
     private String name;
     private String description;
     private Double price;
-    private int stock;
     private String imageUrl;
     private String category;
 
     // Constructors
     public Product() {}
 
-    public Product(String name, String description, Double price, int stock, String imageUrl, String category) {
+    public Product(String name, String description, Double price, String imageUrl, String category) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.stock = stock;
         this.imageUrl = imageUrl;
         this.category = category;
     }
 
-    // Getters and Setters abcd
-    public Long getProductId() {
+    public int getProductId() {
         return productId;
     }
 
-    public void setProductId(Long productId) {
+    public void setProductId(int productId) {
         this.productId = productId;
     }
 
@@ -63,14 +59,6 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
     }
 
     public String getImageUrl() {
