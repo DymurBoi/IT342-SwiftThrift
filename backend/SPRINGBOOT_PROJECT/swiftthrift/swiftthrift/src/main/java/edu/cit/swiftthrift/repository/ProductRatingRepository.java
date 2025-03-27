@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import edu.cit.swiftthrift.entity.ProductRating;
 
-public interface ProdutRatingRepository extends JpaRepository<ProductRating, Integer> {
+public interface ProductRatingRepository extends JpaRepository<ProductRating, Integer> {
     Optional<ProductRating> findByProductID(int productRatingId); 
 }
 
