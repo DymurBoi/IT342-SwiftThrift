@@ -9,25 +9,32 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "product_rating")
-public class ProductRating {
+@Table(name = "store_rating")
+public class StoreRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int productRatingId;
+    private int storeRatingId;
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
     private String name;
+    private int rating; 
     private String comment;
-    private int rating;
     private Date date;
 
-    public ProductRating(int productRatingId, String name, int rating, Date date, String comment) {
-        this.productRatingId = productRatingId;
+    public StoreRating(int storeRatingId, String name, String comment, Date date, int rating) {
+        this.storeRatingId = storeRatingId;
         this.name = name;
-        this.rating = rating;
+        this.comment = comment;
         this.date = date;
     }
 
-    public int getProductRatingId() {
-        return productRatingId;
+    public int getStoreRatingId() {
+        return storeRatingId;
     }
 
     public String getName() {
@@ -48,12 +55,6 @@ public class ProductRating {
     public void setDate(Date date) {
         this.date = date;
     }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 }
+
+

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "product")
 public class Product {
@@ -29,6 +30,7 @@ public class Product {
         this.category = category;
     }
 
+    // Getters and Setters abcd
     public int getProductId() {
         return productId;
     }
