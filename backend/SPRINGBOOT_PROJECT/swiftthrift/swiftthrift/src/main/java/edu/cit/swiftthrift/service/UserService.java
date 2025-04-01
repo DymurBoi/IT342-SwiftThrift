@@ -1,6 +1,7 @@
 package edu.cit.swiftthrift.service;
 
 
+import edu.cit.swiftthrift.entity.StoreRating;
 import edu.cit.swiftthrift.entity.User;
 import edu.cit.swiftthrift.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(int id, User user) {
-        user.setId(id);
-        return userRepository.save(user);
+    public User updateUser(int userId, User user) {
+        User existingUser =userRepository.findById(userId).orElse(null);
+    
+        if (existingUser != null) {
+            existingUser.setName(user.getName());
+            existingUser.setUsername(user.getUsername());
+            existingUser.setPassword(user.getPassword())
+            return userRepository.save(existingUser);
+        }
+        return null; 
     }
+    
 
     public void deleteUser(int id) {
         userRepository.deleteById(id);

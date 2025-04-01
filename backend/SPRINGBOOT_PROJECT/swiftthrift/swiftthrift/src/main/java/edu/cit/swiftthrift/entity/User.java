@@ -11,7 +11,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
-   
+    private String name;
+
 
     @NotBlank(message = "Username is required")
     @Column(nullable = false, unique = true)
@@ -43,6 +44,13 @@ public class User {
         this.password = password;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }
 
