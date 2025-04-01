@@ -1,7 +1,6 @@
 package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.Product;
-import edu.cit.swiftthrift.entity.StoreRating;
 import edu.cit.swiftthrift.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;

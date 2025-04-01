@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.cit.swiftthrift.entity.Product;
-import edu.cit.swiftthrift.entity.ProductRating;
 import edu.cit.swiftthrift.repository.ProductRepository;
 
 @Service
