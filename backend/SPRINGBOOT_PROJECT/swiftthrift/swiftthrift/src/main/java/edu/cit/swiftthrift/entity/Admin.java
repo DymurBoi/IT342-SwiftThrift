@@ -13,13 +13,13 @@ public class Admin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int adminId;
     private String username;
     private String password;
 
     // Getters and Setters
     public int getId() {
-        return id;
+        return adminId;
     }
 
 

@@ -13,14 +13,14 @@ import jakarta.persistence.Table;
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int wishlistId;
 
     private Date addedAt;
  
     // Getters and Setter
 
     public int getId() {
-        return id;
+        return wishlistId;
     }
     public Date getAddedAt() {
         return addedAt;

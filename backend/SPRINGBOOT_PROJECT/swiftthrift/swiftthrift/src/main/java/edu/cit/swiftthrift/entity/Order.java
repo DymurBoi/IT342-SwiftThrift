@@ -14,7 +14,7 @@ public class Order {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int orderId;
   
     private double totalPrice;
     private String status; // PENDING, COMPLETED, CANCELLED
@@ -24,7 +24,7 @@ public class Order {
     // Getters and Setters
 
     public int getId() {
-        return id;
+        return orderId;
     }
     public double getTotalPrice() {
         return totalPrice;
