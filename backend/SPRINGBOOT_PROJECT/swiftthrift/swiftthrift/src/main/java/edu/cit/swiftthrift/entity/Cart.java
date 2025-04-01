@@ -23,7 +23,7 @@ public class Cart {
     private double totalPrice;
  
     // Getters and Setters
-    public int getId() {
+    public int getCartId() {
         return cartId;
     }
 

@@ -22,7 +22,7 @@ public class Category {
 
 
     // Getters and Setters
-    public int getCategoryID() {
+    public int getCategoryId() {
         return categoryID;
     }
 

@@ -2,8 +2,8 @@ package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.Product;
 import edu.cit.swiftthrift.service.ProductService;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,41 +20,35 @@ public class ProductController {
 
     // Create
     @PostMapping("/create")
-    public Product createProduct(@RequestBody Product product) {
-        return productService.createProduct(product);
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        Product savedProduct = productService.createProduct(product);
+        return ResponseEntity.ok(savedProduct);
     }
 
     // Read All
     @GetMapping("/all")
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     // Read by ID
     @GetMapping("/get/{productId}")
-    public Product getProductById(@PathVariable int productId) {
-        return productService.getProductById(productId);
+    public ResponseEntity<Product> getProductById(@PathVariable int productId) {
+        Product product = productService.getProductById(productId);
+        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
     }
 
     // Update
-  @PutMapping("/put/{productId}")
-    public Product updateRating(@PathVariable int productId, @RequestBody Product product) {
-        Product existingProduct = productService.getProductById(productId);
-        
-        if (existingProduct != null) {
-            existingProduct.setName(product.getName());
-            existingProduct.setDescription(product.getDescription());
-            existingProduct.setPrice(product.getPrice());
-            existingProduct.setImageUrl(product.getImageUrl());
-            return productService.createProduct(existingProduct);
-        } else {
-            throw new RuntimeException("Product with ID " + productId + " not found.");
-        }
+    @PutMapping("/update/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable int productId, @RequestBody Product product) {
+        Product updatedProduct = productService.updateProduct(productId, product);
+        return updatedProduct != null ? ResponseEntity.ok(updatedProduct) : ResponseEntity.notFound().build();
     }
+
     // Delete
     @DeleteMapping("/delete/{productId}")
-    public String deleteProduct(@PathVariable int productId) {
+    public ResponseEntity<String> deleteProduct(@PathVariable int productId) {
         productService.deleteProduct(productId);
-        return "Product deleted successfully!";
+        return ResponseEntity.ok("Product deleted successfully!");
     }
 }

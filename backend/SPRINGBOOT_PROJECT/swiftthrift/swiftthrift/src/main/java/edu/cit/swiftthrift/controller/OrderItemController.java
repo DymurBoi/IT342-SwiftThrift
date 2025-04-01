@@ -27,7 +27,7 @@ public class OrderItemController {
     // Read All
     @GetMapping("/all")
     public List<OrderItem> getAllOrderItem() {
-        return orderItemService.getAllOrderItem();
+        return orderItemService.getAllOrderItems();
     }
 
     // Read by ID

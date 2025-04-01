@@ -1,8 +1,9 @@
 package edu.cit.swiftthrift.service;
 
-
 import edu.cit.swiftthrift.entity.Category;
+import edu.cit.swiftthrift.entity.Product;
 import edu.cit.swiftthrift.repository.CategoryRepository;
+import edu.cit.swiftthrift.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,9 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    
+    @Autowired
+    private ProductRepository productRepository;
+
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
@@ -29,21 +32,44 @@ public class CategoryService {
     }
 
     public Category updateCategory(int id, Category updatedCategory) {
-        Optional<Category> existingCategory = categoryRepository.findById(id);
-        if (existingCategory.isPresent()) {
-            Category category = existingCategory.get();
-            category.setCategoryName(updatedCategory.getCategoryName());
-            return categoryRepository.save(category);
+        Optional<Category> existingCategoryOpt = categoryRepository.findById(id);
+        
+        if (existingCategoryOpt.isPresent()) {
+            Category existingCategory = existingCategoryOpt.get();
+            existingCategory.setCategoryName(updatedCategory.getCategoryName());
+    
+            // Update associated products
+            List<Product> updatedProducts = updatedCategory.getProducts();
+            if (updatedProducts != null) {
+                for (Product product : updatedProducts) {
+                    Product existingProduct = productRepository.findById(product.getProductId()).orElse(null);
+                    if (existingProduct != null) {
+                        existingProduct.setCategory(existingCategory);
+                        productRepository.save(existingProduct); // Save the updated product
+                    }
+                }
+                existingCategory.setProducts(updatedProducts);
+            }
+    
+            return categoryRepository.save(existingCategory);
         }
         return null;
     }
 
     public boolean deleteCategory(int id) {
-        if (categoryRepository.existsById(id)) {
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
+        if (categoryOpt.isPresent()) {
+            Category category = categoryOpt.get();
+
+            // Remove category reference from products
+            for (Product product : category.getProducts()) {
+                product.setCategory(null);
+                productRepository.save(product);
+            }
+
             categoryRepository.deleteById(id);
             return true;
         }
         return false;
     }
 }
-

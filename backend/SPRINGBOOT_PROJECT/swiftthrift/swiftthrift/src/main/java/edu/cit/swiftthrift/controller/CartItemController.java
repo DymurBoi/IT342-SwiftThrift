@@ -27,7 +27,7 @@ public class CartItemController {
     // Read All
     @GetMapping("/all")
     public List<CartItem> getAllCartItem() {
-        return cartItemService.getAllCartItem();
+        return cartItemService.getAllCartItems();
     }
 
     // Read by ID

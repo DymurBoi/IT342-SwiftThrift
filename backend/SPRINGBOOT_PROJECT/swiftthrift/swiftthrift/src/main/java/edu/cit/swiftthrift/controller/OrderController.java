@@ -2,15 +2,15 @@ package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.Order;
 import edu.cit.swiftthrift.service.OrderService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api/orders")
 public class OrderController {
+
     @Autowired
     private OrderService orderService;
 
@@ -39,16 +39,7 @@ public class OrderController {
     // Update
     @PutMapping("/put/{orderId}")
     public Order updateOrder(@PathVariable int orderId, @RequestBody Order order) {
-        Order existingOrder = orderService.getOrderById(orderId);
-        
-        if (existingOrder != null) {
-            existingOrder.setTotalPrice(order.getTotalPrice());
-            existingOrder.setStatus(order.getStatus());
-            existingOrder.setCreatedAt(order.getCreatedAt());
-            return orderService.createOrder(existingOrder);
-        } else {
-            throw new RuntimeException("Order with ID " + orderId + " not found.");
-        }
+        return orderService.updateOrder(orderId, order);
     }
 
     // Delete
@@ -58,5 +49,3 @@ public class OrderController {
         return "Order deleted successfully!";
     }
 }
-
-

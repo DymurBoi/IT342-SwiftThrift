@@ -2,8 +2,8 @@ package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.ProductRating;
 import edu.cit.swiftthrift.service.ProductRatingService;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,41 +20,35 @@ public class ProductRatingController {
 
     // Create
     @PostMapping("/create")
-    public ProductRating createProductRating(@RequestBody ProductRating rating) {
-        return productRatingService.createProductRating(rating);
+    public ResponseEntity<ProductRating> createProductRating(@RequestBody ProductRating rating) {
+        ProductRating savedRating = productRatingService.createProductRating(rating);
+        return ResponseEntity.ok(savedRating);
     }
 
     // Read All
     @GetMapping("/all")
-    public List<ProductRating> getAllProductRatings() {
-        return productRatingService.getAllProductRatings();
+    public ResponseEntity<List<ProductRating>> getAllProductRatings() {
+        return ResponseEntity.ok(productRatingService.getAllProductRatings());
     }
 
     // Read by ID
     @GetMapping("/get/{ratingId}")
-    public ProductRating getRatingById(@PathVariable int ratingId) {
-        return productRatingService.getProductRatingById(ratingId);
+    public ResponseEntity<ProductRating> getRatingById(@PathVariable int ratingId) {
+        ProductRating rating = productRatingService.getProductRatingById(ratingId);
+        return rating != null ? ResponseEntity.ok(rating) : ResponseEntity.notFound().build();
     }
 
     // Update
-    @PutMapping("/put/{ratingId}")
-    public ProductRating updateRating(@PathVariable int ratingId, @RequestBody ProductRating rating) {
-        ProductRating existingRating = productRatingService.getProductRatingById(ratingId);
-        
-        if (existingRating != null) {
-            existingRating.setName(rating.getName());
-            existingRating.setRating(rating.getRating());
-            existingRating.setDate(rating.getDate());
-            return productRatingService.createProductRating(existingRating);
-        } else {
-            throw new RuntimeException("Rating with ID " + ratingId + " not found.");
-        }
+    @PutMapping("/update/{ratingId}")
+    public ResponseEntity<ProductRating> updateRating(@PathVariable int ratingId, @RequestBody ProductRating rating) {
+        ProductRating updatedRating = productRatingService.updateProductRating(ratingId, rating);
+        return updatedRating != null ? ResponseEntity.ok(updatedRating) : ResponseEntity.notFound().build();
     }
 
     // Delete
     @DeleteMapping("/delete/{ratingId}")
-    public String deleteRating(@PathVariable int ratingId) {
+    public ResponseEntity<String> deleteRating(@PathVariable int ratingId) {
         productRatingService.deleteProductRating(ratingId);
-        return "Rating deleted successfully!";
+        return ResponseEntity.ok("Rating deleted successfully!");
     }
 }

@@ -1,16 +1,14 @@
 package edu.cit.swiftthrift.controller;
 
-
 import edu.cit.swiftthrift.entity.Category;
-import edu.cit.swiftthrift.repository.CategoryRepository;
+import edu.cit.swiftthrift.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,37 +16,35 @@ import java.util.Optional;
 public class CategoryController {
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
-    // Get all categories with pagination (limiting to 5)
+    // Get all categories with pagination
     @GetMapping("/all")
-    public Page<Category> getAllCategories(Pageable pageable) {
-        return categoryRepository.findAll(PageRequest.of(0, 5));  // Adjust this to limit to 5 categories
+    public ResponseEntity<List<Category>> getAllCategories() {
+        List<Category> categories = categoryService.getAllCategories();
+        return ResponseEntity.ok(categories);
     }
 
     // Get category by ID
     @GetMapping("/get/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable int id) {
-        Optional<Category> category = categoryRepository.findById(id);
+        Optional<Category> category = categoryService.getCategoryById(id);
         return category.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Create a new category
     @PostMapping("/create")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category savedCategory = categoryRepository.save(category);
+        Category savedCategory = categoryService.createCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
     // Update an existing category
-    @PutMapping("/put/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable int id, @RequestBody Category categoryDetails) {
-        Optional<Category> category = categoryRepository.findById(id);
+        Category updatedCategory = categoryService.updateCategory(id, categoryDetails);
         
-        if (category.isPresent()) {
-            Category updatedCategory = category.get();
-            updatedCategory.setCategoryName(categoryDetails.getCategoryName());
-            categoryRepository.save(updatedCategory);
+        if (updatedCategory != null) {
             return ResponseEntity.ok(updatedCategory);
         } else {
             return ResponseEntity.notFound().build();
@@ -58,10 +54,9 @@ public class CategoryController {
     // Delete a category
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable int id) {
-        Optional<Category> category = categoryRepository.findById(id);
+        boolean deleted = categoryService.deleteCategory(id);
         
-        if (category.isPresent()) {
-            categoryRepository.deleteById(id);
+        if (deleted) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

@@ -29,7 +29,7 @@ public class Order {
  
     // Getters and Setters
 
-    public int getId() {
+    public int getOrderId() {
         return orderId;
     }
     public double getTotalPrice() {

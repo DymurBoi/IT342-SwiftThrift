@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WishlistService {
@@ -13,7 +14,6 @@ public class WishlistService {
     @Autowired
     private WishlistRepository wishlistRepository;
 
-    
     public List<Wishlist> getAllWishlists() {
         return wishlistRepository.findAll();
     }
@@ -27,18 +27,21 @@ public class WishlistService {
     }
 
     public Wishlist updateWishlist(int id, Wishlist wishlist) {
-        Wishlist existingWishlist = wishlistRepository.findById(id).orElse(null);
+        Optional<Wishlist> existingWishlistOpt = wishlistRepository.findById(id);
     
-        if (existingWishlist != null) {
+        if (existingWishlistOpt.isPresent()) {
+            Wishlist existingWishlist = existingWishlistOpt.get();
             existingWishlist.setAddedAt(wishlist.getAddedAt());
             return wishlistRepository.save(existingWishlist);
         }
         return null; 
     }
 
-    public void deleteWishlist(int id) {
-        wishlistRepository.deleteById(id);
+    public boolean deleteWishlist(int id) {
+        if (wishlistRepository.existsById(id)) {
+            wishlistRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
-
-
