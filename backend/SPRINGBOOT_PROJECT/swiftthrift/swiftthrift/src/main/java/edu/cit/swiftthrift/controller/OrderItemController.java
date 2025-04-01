@@ -2,6 +2,8 @@ package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.OrderItem;
 import edu.cit.swiftthrift.service.OrderItemService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,8 +11,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/orderItem")
 public class OrderItemController {
-
-    private final OrderItemService orderItemService;
+    @Autowired
+    private OrderItemService orderItemService;
 
     public OrderItemController(OrderItemService ordeItemService) {
         this.orderItemService = ordeItemService;
@@ -29,13 +31,13 @@ public class OrderItemController {
     }
 
     // Read by ID
-    @GetMapping("/{orderItemId}")
+    @GetMapping("/get/{orderItemId}")
     public OrderItem getOrderItemById(@PathVariable int orderItemId) {
         return orderItemService.getOrderItemById(orderItemId);
     }
 
     // Update
-    @PutMapping("/{orderId}")
+    @PutMapping("/put/{orderItemId}")
     public OrderItem updateOrderItem(@PathVariable int orderItemId, @RequestBody OrderItem orderItem) {
         OrderItem existingOrderItem = orderItemService.getOrderItemById(orderItemId);
         
@@ -48,7 +50,7 @@ public class OrderItemController {
     }
 
     // Delete
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("/delete/{orderItemId}")
     public String deleteOrderItem(@PathVariable int orderItemId) {
         orderItemService.deleteOrderItem(orderItemId);
         return "Order deleted successfully!";

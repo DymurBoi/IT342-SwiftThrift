@@ -21,7 +21,7 @@ public class CategoryController {
     private CategoryRepository categoryRepository;
 
     // Get all categories with pagination (limiting to 5)
-    @GetMapping("/getall")
+    @GetMapping("/all")
     public Page<Category> getAllCategories(Pageable pageable) {
         return categoryRepository.findAll(PageRequest.of(0, 5));  // Adjust this to limit to 5 categories
     }
@@ -41,7 +41,7 @@ public class CategoryController {
     }
 
     // Update an existing category
-    @PutMapping("/update/{id}")
+    @PutMapping("/put/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable int id, @RequestBody Category categoryDetails) {
         Optional<Category> category = categoryRepository.findById(id);
         

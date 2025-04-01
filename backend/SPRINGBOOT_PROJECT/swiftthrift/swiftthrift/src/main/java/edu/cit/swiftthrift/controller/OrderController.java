@@ -2,6 +2,8 @@ package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.Order;
 import edu.cit.swiftthrift.service.OrderService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,8 +11,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
-
-    private final OrderService orderService;
+    @Autowired
+    private OrderService orderService;
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
@@ -29,13 +31,13 @@ public class OrderController {
     }
 
     // Read by ID
-    @GetMapping("/{orderId}")
+    @GetMapping("/get/{orderId}")
     public Order getOrderById(@PathVariable int orderId) {
         return orderService.getOrderById(orderId);
     }
 
     // Update
-    @PutMapping("/{orderId}")
+    @PutMapping("/put/{orderId}")
     public Order updateOrder(@PathVariable int orderId, @RequestBody Order order) {
         Order existingOrder = orderService.getOrderById(orderId);
         
@@ -50,7 +52,7 @@ public class OrderController {
     }
 
     // Delete
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("/delete/{orderId}")
     public String deleteOrder(@PathVariable int orderId) {
         orderService.deleteOrder(orderId);
         return "Order deleted successfully!";
