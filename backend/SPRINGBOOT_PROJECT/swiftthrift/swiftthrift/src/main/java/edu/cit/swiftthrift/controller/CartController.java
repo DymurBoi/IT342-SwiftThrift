@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
-    
+
     @Autowired
     private CartService cartService;
 
@@ -38,7 +38,7 @@ public class CartController {
     }
 
     // Update
-    @PutMapping("/put/{cartId}")
+    @PutMapping("/update/{cartId}")
     public Cart updateCart(@PathVariable int cartId, @RequestBody Cart cart) {
         return cartService.updateCart(cartId, cart);
     }

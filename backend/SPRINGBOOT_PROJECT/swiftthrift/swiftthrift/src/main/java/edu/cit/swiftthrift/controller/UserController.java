@@ -19,32 +19,31 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Create
+    // Create User
     @PostMapping("/create")
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
-    // Read All
-
-    @GetMapping ("/all")
+    // Get All Users
+    @GetMapping("/all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    // Read by ID
+    // Get User by ID
     @GetMapping("/get/{userId}")
     public Optional<User> getUserById(@PathVariable int userId) {
         return userService.getUserById(userId);
     }
 
-    // Update
-    @PutMapping("/put/{userId}")
+    // Update User
+    @PutMapping("/update/{userId}")
     public User updateUser(@PathVariable int userId, @RequestBody User user) {
         return userService.updateUser(userId, user);
     }
 
-    // Delete
+    // Delete User
     @DeleteMapping("/delete/{userId}")
     public String deleteUser(@PathVariable int userId) {
         userService.deleteUser(userId);
