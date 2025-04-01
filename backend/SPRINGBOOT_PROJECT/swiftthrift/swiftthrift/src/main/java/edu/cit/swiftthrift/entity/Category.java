@@ -21,9 +21,6 @@ public class Category {
         return categoryID;
     }
 
-    public void setCategoryID(int categoryID) {
-        this.categoryID = categoryID;
-    }
 
     public String getCategoryName() {
         return categoryName;

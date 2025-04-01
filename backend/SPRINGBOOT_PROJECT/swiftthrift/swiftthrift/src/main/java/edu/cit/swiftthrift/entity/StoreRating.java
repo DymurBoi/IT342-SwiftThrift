@@ -14,13 +14,7 @@ public class StoreRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int storeRatingId;
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+    
     private String name;
     private int rating; 
     private String comment;
@@ -37,6 +31,13 @@ public class StoreRating {
         return storeRatingId;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
     public String getName() {
         return name;
     }

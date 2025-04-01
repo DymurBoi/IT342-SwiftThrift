@@ -1,6 +1,7 @@
 package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.Product;
+import edu.cit.swiftthrift.entity.StoreRating;
 import edu.cit.swiftthrift.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class ProductController {
     // Create
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
-        return productService.saveProduct(product);
+        return productService.createProduct(product);
     }
 
     // Read All
@@ -35,12 +36,20 @@ public class ProductController {
     }
 
     // Update
-    @PutMapping("/{productId}")
-    public Product updateProduct(@PathVariable int productId, @RequestBody Product product) {
-        product.setProductId(productId);
-        return productService.saveProduct(product);
+  @PutMapping("/{productId}")
+    public Product updateRating(@PathVariable int productId, @RequestBody Product product) {
+        Product existingProduct = productService.getProductById(productId);
+        
+        if (existingProduct != null) {
+            existingProduct.setName(product.getName());
+            existingProduct.setDescription(product.getDescription());
+            existingProduct.setPrice(product.getPrice());
+            existingProduct.setImageUrl(product.getImageUrl());
+            return productService.createProduct(existingProduct);
+        } else {
+            throw new RuntimeException("Product with ID " + productId + " not found.");
+        }
     }
-
     // Delete
     @DeleteMapping("/{productId}")
     public String deleteProduct(@PathVariable int productId) {

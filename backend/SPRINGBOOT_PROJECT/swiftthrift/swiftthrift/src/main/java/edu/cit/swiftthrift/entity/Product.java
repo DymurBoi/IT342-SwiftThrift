@@ -17,17 +17,15 @@ public class Product {
     private String description;
     private Double price;
     private String imageUrl;
-    private String category;
 
     // Constructors
     public Product() {}
 
-    public Product(String name, String description, Double price, String imageUrl, String category) {
+    public Product(String name, String description, Double price, String imageUrl) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.category = category;
     }
 
     // Getters and Setters abcd
@@ -71,11 +69,4 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
 }
