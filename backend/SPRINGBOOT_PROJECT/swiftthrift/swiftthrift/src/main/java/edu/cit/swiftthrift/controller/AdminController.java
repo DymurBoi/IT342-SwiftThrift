@@ -32,12 +32,13 @@ public class AdminController {
     // Endpoint for logging in an admin
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Admin admin) {
-        boolean isAuthenticated = adminService.authenticateAdmin(admin.getUsername(), admin.getPassword());
-        if (isAuthenticated) {
-            return ResponseEntity.ok("Login successful!");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
+       // boolean isAuthenticated = adminService.authenticateAdmin(admin.getUsername(), admin.getPassword());
+       // if (isAuthenticated) {
+       //     return ResponseEntity.ok("Login successful!");
+       // } else {
+         ///   return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        //}
+        return ResponseEntity.ok("Login successful!  No authentication");
     }
 
     // New endpoint to fetch all admin users
