@@ -37,7 +37,7 @@ public class OrderItemController {
     }
 
     // Update
-    @PutMapping("/put/{orderItemId}")
+    @PutMapping("/update/{orderItemId}")
     public OrderItem updateOrderItem(@PathVariable int orderItemId, @RequestBody OrderItem orderItem) {
         OrderItem existingOrderItem = orderItemService.getOrderItemById(orderItemId);
         
