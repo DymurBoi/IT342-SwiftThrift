@@ -51,4 +51,9 @@ public class ProductRatingController {
         productRatingService.deleteProductRating(ratingId);
         return ResponseEntity.ok("Rating deleted successfully!");
     }
+    @GetMapping("/byProduct/{productId}")
+    public ResponseEntity<List<ProductRating>> getProductRatingsByProductId(@PathVariable int productId) {
+        List<ProductRating> ratings = productRatingService.getProductRatingsByProductId(productId);
+        return ResponseEntity.ok(ratings);
+    }
 }

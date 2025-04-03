@@ -58,4 +58,10 @@ public class WishlistController {
         boolean deleted = wishlistService.deleteWishlist(wishlistId);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/byUser/{userId}")
+    public ResponseEntity<List<Wishlist>> getWishlistByUserId(@PathVariable int userId) {
+        List<Wishlist> wishlist = wishlistService.getWishlistByUserId(userId);
+        return ResponseEntity.ok(wishlist);
+    }
 }

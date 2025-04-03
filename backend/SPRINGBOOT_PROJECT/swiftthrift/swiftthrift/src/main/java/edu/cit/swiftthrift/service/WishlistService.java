@@ -44,4 +44,8 @@ public class WishlistService {
         }
         return false;
     }
+
+    public List<Wishlist> getWishlistByUserId(int userId) {
+        return wishlistRepository.findByUserId(userId);
+    }
 }

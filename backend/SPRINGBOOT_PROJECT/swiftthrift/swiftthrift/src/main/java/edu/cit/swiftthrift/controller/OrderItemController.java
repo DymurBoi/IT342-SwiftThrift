@@ -4,6 +4,7 @@ import edu.cit.swiftthrift.entity.OrderItem;
 import edu.cit.swiftthrift.service.OrderItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,6 +55,12 @@ public class OrderItemController {
     public String deleteOrderItem(@PathVariable int orderItemId) {
         orderItemService.deleteOrderItem(orderItemId);
         return "Order deleted successfully!";
+    }
+
+    @GetMapping("/byOrder/{orderId}")
+    public ResponseEntity<List<OrderItem>> getOrderItemsByOrderId(@PathVariable int orderId) {
+        List<OrderItem> orderItems = orderItemService.getOrderItemsByOrderId(orderId);
+        return ResponseEntity.ok(orderItems);
     }
 }
 

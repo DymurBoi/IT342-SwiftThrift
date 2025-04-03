@@ -59,4 +59,8 @@ public class ProductRatingService {
     public void deleteProductRating(int id) {
         productRatingRepository.deleteById(id);
     }
+
+    public List<ProductRating> getProductRatingsByProductId(int productId) {
+        return productRatingRepository.findByProductId(productId);
+    }
 }

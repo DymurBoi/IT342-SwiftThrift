@@ -3,6 +3,7 @@ package edu.cit.swiftthrift.controller;
 import edu.cit.swiftthrift.entity.Order;
 import edu.cit.swiftthrift.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,5 +48,11 @@ public class OrderController {
     public String deleteOrder(@PathVariable int orderId) {
         orderService.deleteOrder(orderId);
         return "Order deleted successfully!";
+    }
+
+    @GetMapping("/byUser/{userId}")
+    public ResponseEntity<List<Order>> getOrdersByUserId(@PathVariable int userId) {
+        List<Order> orders = orderService.getOrdersByUserId(userId);
+        return ResponseEntity.ok(orders);
     }
 }
