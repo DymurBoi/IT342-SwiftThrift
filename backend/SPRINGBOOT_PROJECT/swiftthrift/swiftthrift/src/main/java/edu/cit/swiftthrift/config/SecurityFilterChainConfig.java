@@ -1,0 +1,96 @@
+package edu.cit.swiftthrift.config;
+
+import edu.cit.swiftthrift.entity.User;
+import edu.cit.swiftthrift.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
+import java.util.Optional;
+
+@Configuration
+@RequiredArgsConstructor
+public class SecurityFilterChainConfig {
+
+    private final UserRepository userRepository;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .cors().and()
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/storeratings/**").permitAll()
+                .requestMatchers("/oauth2/**").permitAll()
+                .requestMatchers("/login/**").permitAll()
+                .requestMatchers("/api/admins/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .successHandler(oAuth2SuccessHandler())
+            );
+
+        return http.build();
+    }
+
+    // Allow frontend (React/Kotlin mobile) to access APIs
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Collections.singletonList("*")); // Allow all origins (change to specific domains if needed)
+        config.setAllowedMethods(Collections.singletonList("*")); // GET, POST, PUT, DELETE, etc.
+        config.setAllowedHeaders(Collections.singletonList("*"));
+        config.setAllowCredentials(true); // Allow credentials (cookies, headers)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    // Automatically create a new user when logging in with Google
+    public AuthenticationSuccessHandler oAuth2SuccessHandler() {
+        return (request, response, authentication) -> {
+            String email = authentication.getName();
+
+            Optional<User> existingUser = userRepository.findByEmail(email);
+
+            if (existingUser.isEmpty()) {
+                User newUser = new User();
+                newUser.setEmail(email);
+                newUser.setUsername(email.split("@")[0]); // Basic username from email
+                newUser.setRole("ROLE_USER"); // Default role
+                userRepository.save(newUser);
+            }
+
+            response.sendRedirect("/"); // Redirect to frontend
+        };
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    // Needed for manual auth if you ever use login form
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+}
+
