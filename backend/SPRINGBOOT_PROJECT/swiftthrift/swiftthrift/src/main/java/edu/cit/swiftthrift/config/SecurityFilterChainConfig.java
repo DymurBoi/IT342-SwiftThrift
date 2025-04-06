@@ -30,7 +30,8 @@ public class SecurityFilterChainConfig {
 
     private final UserRepository userRepository;
 
-    @Bean
+    //For Production if needed
+   /*@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors().and()
@@ -47,6 +48,30 @@ public class SecurityFilterChainConfig {
             );
 
         return http.build();
+    }*/
+
+    //For Testing
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .cors().and()
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/storeRatings/**").permitAll()
+                .requestMatchers("/api/users/**").permitAll()
+                .requestMatchers("/api/products/**").permitAll()
+                .requestMatchers("/api/orders/**").permitAll()
+                .requestMatchers("/api/wishlist/**").permitAll()
+                .requestMatchers("/api/admins/**").permitAll() 
+                .requestMatchers("/api/orderItem/**").permitAll() 
+                .requestMatchers("/api/cart/**").permitAll() 
+                .requestMatchers("/api/cartItem/**").permitAll() 
+                .requestMatchers("/api/categories/**").permitAll() 
+                .requestMatchers("/api/productRatings/**").permitAll() 
+
+                .anyRequest().permitAll()
+            );
+            return http.build();
     }
 
     // Allow frontend (React/Kotlin mobile) to access APIs
