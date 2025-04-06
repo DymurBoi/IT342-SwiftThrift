@@ -64,7 +64,8 @@ public class UserService {
         User existingUser = userRepository.findById(userId).orElse(null);
 
         if (existingUser != null) {
-            existingUser.setName(updatedUser.getName());
+            existingUser.setFName(updatedUser.getFName());
+            existingUser.setLName(updatedUser.getLName());
             existingUser.setUsername(updatedUser.getUsername());
             
             // Update password only if it's not null

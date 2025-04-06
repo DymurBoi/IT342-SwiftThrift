@@ -13,8 +13,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
-
-    private String name;
+    private String fname;
+    private String lname;
+    private String email; 
+    private String phoneNumber; // Optional field
+    private String role; // Optional field
 
 
     @NotBlank(message = "Username is required")
@@ -25,9 +28,7 @@ public class User {
     @Column(nullable = false)
     private String password; // Store hashed password
 
-    private String email; 
-    private String phoneNumber; // Optional field
-    private String role; // Optional field
+   
     
     public String getEmail() {
         return email;
@@ -73,12 +74,21 @@ public class User {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getLName() {
+        return lname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLName(String lName) {
+        this.lname = lName;
+    }
+    
+    
+    public String getFName() {
+        return fname;
+    }
+
+    public void setFName(String fName) {
+        this.fname = fName;
     }
 
     //Relationships
