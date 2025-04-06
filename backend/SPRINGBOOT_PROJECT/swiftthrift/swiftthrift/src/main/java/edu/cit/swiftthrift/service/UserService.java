@@ -110,16 +110,16 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    //LOGIN
-    public User authenticate(String email, String password) {
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            // Assuming passwords are hashed. Use BCrypt if you hash passwords.
-            if (user.getPassword().equals(password)) {
-                return user;
-            }
+    //Login
+    public User authenticate(String email, String rawPassword) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+    
+        // Compare raw password with hashed password
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
         }
-        throw new RuntimeException("Invalid email or password");
+    
+        return user; // Login success
     }
 }
