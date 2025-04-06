@@ -67,6 +67,8 @@ public class UserService {
             existingUser.setFName(updatedUser.getFName());
             existingUser.setLName(updatedUser.getLName());
             existingUser.setUsername(updatedUser.getUsername());
+            existingUser.setEmail(updatedUser.getEmail());
+
             
             // Update password only if it's not null
             if (updatedUser.getPassword() != null) {
