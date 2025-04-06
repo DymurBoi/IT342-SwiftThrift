@@ -109,4 +109,17 @@ public class UserService {
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
+
+    //LOGIN
+    public User authenticate(String email, String password) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // Assuming passwords are hashed. Use BCrypt if you hash passwords.
+            if (user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        throw new RuntimeException("Invalid email or password");
+    }
 }
