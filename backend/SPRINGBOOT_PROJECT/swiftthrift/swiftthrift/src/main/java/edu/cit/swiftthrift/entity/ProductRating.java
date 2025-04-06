@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 public class ProductRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int productRatingId;
+    private Integer productRatingId;
     private String name;
     private String comment;
     private int rating;

@@ -107,11 +107,6 @@ public class SecurityFilterChainConfig {
         };
     }
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     // Needed for manual auth if you ever use login form
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

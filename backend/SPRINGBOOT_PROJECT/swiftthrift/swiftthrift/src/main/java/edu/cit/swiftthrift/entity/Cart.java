@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cartId;
+    private Integer cartId;
 
     private double totalPrice;
  

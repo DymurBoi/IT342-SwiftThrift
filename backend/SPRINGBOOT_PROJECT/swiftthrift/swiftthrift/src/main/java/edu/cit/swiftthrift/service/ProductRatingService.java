@@ -60,7 +60,7 @@ public class ProductRatingService {
         productRatingRepository.deleteById(id);
     }
 
-    public List<ProductRating> getProductRatingsByProductId(int productId) {
-        return productRatingRepository.findByProductId(productId);
+    public List<ProductRating> getProductRatingsByProductId(Integer productId) {
+        return productRatingRepository.findByProductProductId(productId);
     }
 }

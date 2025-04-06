@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderItemid;
+    private Integer orderItemid;
 
     private double subtotal;
  

@@ -11,5 +11,5 @@ import edu.cit.swiftthrift.entity.ProductRating;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Integer> {
-    List<OrderItem> findByOrderId(int orderId);
+    List<OrderItem> findByOrderOrderId(Integer orderId);
 }

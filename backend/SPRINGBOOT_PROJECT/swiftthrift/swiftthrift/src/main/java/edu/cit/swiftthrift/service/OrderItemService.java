@@ -76,7 +76,7 @@ public class OrderItemService {
         orderItemRepository.deleteById(id);
     }
 
-    public List<OrderItem> getOrderItemsByOrderId(int orderId) {
-        return orderItemRepository.findByOrderId(orderId);
+    public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
+        return orderItemRepository.findByOrderOrderId(orderId);
     }
 }

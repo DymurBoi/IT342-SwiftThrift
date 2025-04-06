@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int wishlistId;
+    private Integer wishlistId;
 
     private Date addedAt;
  

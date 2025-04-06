@@ -9,5 +9,5 @@ import edu.cit.swiftthrift.entity.Order;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
-    List<Order> findByUserId(int userId);
+    List<Order> findByUserUserId(Integer userId);
 }
