@@ -23,6 +23,24 @@ public class Product {
     private String description;
     private Double price;
     private String imageUrl;
+    private Integer condition; // 0 for new, 1 for used
+    public Integer getCondition() {
+        return condition;
+    }
+
+    public void setCondition(Integer condition) {
+        this.condition = condition;
+    }
+
+    public Boolean getIsSold() {
+        return isSold;
+    }
+
+    public void setIsSold(Boolean isSold) {
+        this.isSold = isSold;
+    }
+
+    private Boolean isSold;
 
     // Constructors
     public Product() {}
