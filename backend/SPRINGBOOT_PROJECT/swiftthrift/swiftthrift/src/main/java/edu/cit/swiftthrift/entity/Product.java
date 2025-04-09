@@ -100,4 +100,16 @@ public class Product {
         this.productRatings = productRatings;
     }
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<WishlistItem> wishlistItems = new ArrayList<>();
+
+    public List<WishlistItem> getWishlistItems() {
+        return wishlistItems;
+    }
+
+    public void setWishlistItems(List<WishlistItem> wishlistItems) {
+        this.wishlistItems = wishlistItems;
+    }
+
+
 }
