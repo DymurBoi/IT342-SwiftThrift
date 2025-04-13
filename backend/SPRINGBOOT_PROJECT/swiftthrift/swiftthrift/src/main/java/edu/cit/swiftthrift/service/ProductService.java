@@ -43,7 +43,7 @@ public class ProductService {
             existingProduct.setName(updatedProduct.getName());
             existingProduct.setDescription(updatedProduct.getDescription());
             existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setImageUrl(updatedProduct.getImageUrl());
+            existingProduct.setImageUrls(updatedProduct.getImageUrls());
 
             // Update associated category if provided
             if (updatedProduct.getCategory() != null) {
@@ -58,5 +58,9 @@ public class ProductService {
 
     public void deleteProduct(int id) {
         productRepository.deleteById(id);
+    }
+
+    public Optional<Product> getProductById(Integer id) {
+        return productRepository.findById(id);
     }
 }

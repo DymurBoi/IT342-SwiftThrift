@@ -1,125 +1,100 @@
 package edu.cit.swiftthrift.service;
 
-import edu.cit.swiftthrift.entity.*;
+import edu.cit.swiftthrift.entity.User;
 import edu.cit.swiftthrift.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserRepository userRepository;
+    // Simulated token storage (use Redis or DB in prod)
+    private final Map<String, String> resetTokens = new HashMap<>();
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
+    public User createUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(int id) {
-        return userRepository.findById(id);
-    }
-
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    public User createUser(User user) {
-        // Encode password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Initialize relationships if null
-        if (user.getCart() == null) {
-            user.setCart(new Cart());
-            user.getCart().setUser(user);
-        }
-
-        if (user.getWishlist() == null) {
-            user.setWishlist(new Wishlist());
-            user.getWishlist().setUser(user);
-        }
-
-        if (user.getOrders() == null) {
-            user.setOrders(List.of()); // Initialize empty list
-        }
-
-        if (user.getStoreRatings() == null) {
-            user.setStoreRatings(List.of());
-        }
-
-        if (user.getProductRatings() == null) {
-            user.setProductRatings(List.of());
-        }
-
-        return userRepository.save(user);
+    public Optional<User> getUserById(int userId) {
+        return userRepository.findById(userId);
     }
 
     public User updateUser(int userId, User updatedUser) {
-        User existingUser = userRepository.findById(userId).orElse(null);
-
-        if (existingUser != null) {
-            existingUser.setFName(updatedUser.getFName());
+        return userRepository.findById(userId).map(existingUser -> {
             existingUser.setLName(updatedUser.getLName());
-            existingUser.setUsername(updatedUser.getUsername());
+            existingUser.setFName(updatedUser.getFName());
             existingUser.setEmail(updatedUser.getEmail());
-
-            
-            // Update password only if it's not null
-            if (updatedUser.getPassword() != null) {
-                existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-            }
-
-            // Update relationships
-            if (updatedUser.getCart() != null) {
-                existingUser.setCart(updatedUser.getCart());
-                existingUser.getCart().setUser(existingUser);
-            }
-
-            if (updatedUser.getWishlist() != null) {
-                existingUser.setWishlist(updatedUser.getWishlist());
-                existingUser.getWishlist().setUser(existingUser);
-            }
-
-            if (updatedUser.getOrders() != null) {
-                existingUser.setOrders(updatedUser.getOrders());
-                existingUser.getOrders().forEach(order -> order.setUser(existingUser));
-            }
-
-            if (updatedUser.getStoreRatings() != null) {
-                existingUser.setStoreRatings(updatedUser.getStoreRatings());
-                existingUser.getStoreRatings().forEach(rating -> rating.setUser(existingUser));
-            }
-
-            if (updatedUser.getProductRatings() != null) {
-                existingUser.setProductRatings(updatedUser.getProductRatings());
-                existingUser.getProductRatings().forEach(rating -> rating.setUser(existingUser));
-            }
-
+            existingUser.setUsername(updatedUser.getUsername());
             return userRepository.save(existingUser);
-        }
-        return null;
+        }).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public void deleteUser(int id) {
-        userRepository.deleteById(id);
+    public void deleteUser(int userId) {
+        userRepository.deleteById(userId);
     }
 
-    //Login
-    public User authenticate(String email, String rawPassword) {
+    public User authenticate(String email, String password) {
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("Invalid email or password"));
-    
-        // Compare raw password with hashed password
-        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        } else {
+            throw new RuntimeException("Invalid credentials");
         }
-    
-        return user; // Login success
+    }
+
+    public void updatePassword(int userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public void sendPasswordResetEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Simulate token (real app should email this token)
+        String token = UUID.randomUUID().toString();
+        resetTokens.put(token, email);
+
+        System.out.println("Reset token (email simulation): " + token);
+        // In real-world: Send this token via email to the user
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        String email = resetTokens.get(token);
+
+        if (email == null) {
+            throw new RuntimeException("Invalid or expired reset token");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        resetTokens.remove(token); // Clear used token
     }
 }

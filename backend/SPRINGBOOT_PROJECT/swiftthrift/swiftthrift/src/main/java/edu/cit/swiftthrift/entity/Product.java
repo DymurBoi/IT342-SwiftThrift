@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,8 +25,26 @@ public class Product {
     private String name;
     private String description;
     private Double price;
-    private String imageUrl;
     private Integer condition; // 0 for new, 1 for used
+
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
+    private List<String> imageUrls = new ArrayList<>();
+ 
+
+    // Constructors
+    public Product() {}
+
+    public Product(String name, String description, Double price, List<String> imageUrl) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageUrls = imageUrl;
+    }
+
+    
+     // Getters and Setters 
     public Integer getCondition() {
         return condition;
     }
@@ -42,17 +63,6 @@ public class Product {
 
     private Boolean isSold;
 
-    // Constructors
-    public Product() {}
-
-    public Product(String name, String description, Double price, String imageUrl) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.imageUrl = imageUrl;
-    }
-
-    // Getters and Setters abcd
     public int getProductId() {
         return productId;
     }
@@ -85,13 +95,14 @@ public class Product {
         this.price = price;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public List<String> getImageUrls() {
+        return imageUrls;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
+   
 
     //Relationships
      @ManyToOne

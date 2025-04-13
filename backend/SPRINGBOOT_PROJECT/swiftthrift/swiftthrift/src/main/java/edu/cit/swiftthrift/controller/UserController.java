@@ -1,25 +1,24 @@
 package edu.cit.swiftthrift.controller;
 
-import edu.cit.swiftthrift.dto.LoginRequest;
+import edu.cit.swiftthrift.dto.*;
 import edu.cit.swiftthrift.entity.User;
+import edu.cit.swiftthrift.security.JwtTokenProvider;
 import edu.cit.swiftthrift.service.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     // Create User
@@ -53,14 +52,45 @@ public class UserController {
         return "User deleted successfully!";
     }
 
-    //Login
-    @GetMapping("/login")
-public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
-    try {
-        User user = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
-        return ResponseEntity.ok(user); // You can return a JWT or just the user info
-    } catch (RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+    // Login
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        try {
+            User user = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+            String token = jwtTokenProvider.generateToken(user);
+            Map<String, Object> response = new HashMap<>();
+            response.put("user", user);
+            response.put("token", token);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
     }
-}
+
+    // Update Password
+    @PutMapping("/update-password/{userId}")
+    public ResponseEntity<?> updatePassword(@PathVariable int userId, @RequestBody PasswordUpdateRequest request) {
+        try {
+            userService.updatePassword(userId, request.getCurrentPassword(), request.getNewPassword());
+            return ResponseEntity.ok("Password updated successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    // Forgot Password
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        userService.sendPasswordResetEmail(email);
+        return ResponseEntity.ok("If an account exists with this email, a reset link will be sent");
+    }
+
+    // Reset Password
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+        userService.resetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok("Password has been reset successfully");
+    }
+
 }

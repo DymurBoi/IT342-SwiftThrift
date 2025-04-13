@@ -1,10 +1,14 @@
 package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.Product;
+import edu.cit.swiftthrift.service.FileStorageService;
 import edu.cit.swiftthrift.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.List;
 
@@ -13,16 +17,34 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private ProductService productService;
+    @Autowired
+    private final FileStorageService fileStorageService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productServicem,FileStorageService fileStorageService) {
         this.productService = productService;
+        this.fileStorageService = fileStorageService;
     }
 
     // Create
-    @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product savedProduct = productService.createProduct(product);
-        return ResponseEntity.ok(savedProduct);
+    @PostMapping("/upload/{productId}")
+    public ResponseEntity<?> uploadProductImages(
+      @PathVariable Integer productId,
+        @RequestParam("files") List<MultipartFile> files
+        ) {
+            try {
+                Product product = productService.getProductById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+                List<String> imageUrls = fileStorageService.saveFiles(files);
+                product.getImageUrls().addAll(imageUrls);
+
+                productService.createProduct(product);
+
+                return ResponseEntity.ok("Images uploaded successfully!");
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error uploading files: " + e.getMessage());
+                }
     }
 
     // Read All
