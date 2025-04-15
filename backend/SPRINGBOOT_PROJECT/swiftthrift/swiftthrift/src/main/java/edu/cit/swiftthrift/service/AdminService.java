@@ -18,6 +18,7 @@ public class AdminService {
 
     // Save or register a new admin
     public Admin saveAdmin(Admin admin) {
+        admin.setRole("ADMIN");
         return adminRepository.save(admin);
     }
 

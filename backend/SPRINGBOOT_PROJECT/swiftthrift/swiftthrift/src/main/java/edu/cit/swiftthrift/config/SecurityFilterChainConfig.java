@@ -32,23 +32,42 @@ public class SecurityFilterChainConfig {
 
     //For Production if needed
    /*@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .cors().and()
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/storeratings/**").permitAll()
-                .requestMatchers("/oauth2/**").permitAll()
-                .requestMatchers("/login/**").permitAll()
-                .requestMatchers("/api/admins/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth2 -> oauth2
-                .successHandler(oAuth2SuccessHandler())
-            );
-
-        return http.build();
-    }*/
+   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+       http
+           .cors().and()
+           .csrf(csrf -> csrf.disable())
+           .authorizeHttpRequests(auth -> auth
+               // Public endpoints
+               .requestMatchers("/api/storeRatings/**").permitAll()
+               .requestMatchers("/api/users/**").permitAll()
+               .requestMatchers("/api/orders/**").permitAll()
+               .requestMatchers("/api/wishlist/**").permitAll()
+               .requestMatchers("/api/orderItem/**").permitAll()
+               .requestMatchers("/api/cart/**").permitAll()
+               .requestMatchers("/api/cartItem/**").permitAll()
+               .requestMatchers("/api/categories/**").permitAll()
+               .requestMatchers("/api/productRatings/**").permitAll()
+   
+               // Allow anyone to view products
+               .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+   
+               // Restrict create, update, delete to ADMIN only
+               .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
+               .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
+               .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+   
+               // Only Admins can access admin endpoints
+               .requestMatchers("/api/admins/**").hasRole("ADMIN")
+   
+               // All others require authentication
+               .anyRequest().authenticated()
+           )
+           .oauth2Login(oauth2 -> oauth2
+               .successHandler(oAuth2SuccessHandler())
+           );
+   
+       return http.build();
+   }*/
 
     //For Testing
     @Bean

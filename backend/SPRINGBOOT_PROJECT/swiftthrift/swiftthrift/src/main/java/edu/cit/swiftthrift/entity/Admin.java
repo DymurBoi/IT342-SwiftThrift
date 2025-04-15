@@ -16,6 +16,10 @@ public class Admin {
     private Integer adminId;
     private String username;
     private String password;
+    private String role; // Optional field
+
+   
+
 
     // Getters and Setters
     public Integer getId() {
@@ -37,6 +41,15 @@ public class Admin {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public String getRole() {
+        return role;
+    }
+
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
 
