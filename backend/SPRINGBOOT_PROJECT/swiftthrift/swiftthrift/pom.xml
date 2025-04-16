@@ -105,7 +105,7 @@
                 <version>2.4.4</version>
                 <configuration>
                 <version>1</version>
-                <projectId>GCLOUD_CONFIG</projectId>
+                <projectId>swiftthrift-456814</projectId>
                 </configuration>
             </plugin>
 		</plugins>
