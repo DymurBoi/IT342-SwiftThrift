@@ -22,10 +22,11 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productId;
+
     private String name;
     private String description;
     private Double price;
-    private Integer condition; // 0 for new, 1 for used
+    private Integer itemCondition; // 0 for new, 1 for used
 
     @ElementCollection
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
@@ -36,21 +37,22 @@ public class Product {
     // Constructors
     public Product() {}
 
-    public Product(String name, String description, Double price, List<String> imageUrl) {
+    public Product(String name, String description, Double price, List<String> imageUrl, Integer itemCondition) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.imageUrls = imageUrl;
+        this.itemCondition = itemCondition; 
     }
 
     
      // Getters and Setters 
     public Integer getCondition() {
-        return condition;
+        return itemCondition;
     }
 
     public void setCondition(Integer condition) {
-        this.condition = condition;
+        this.itemCondition = condition;
     }
 
     public Boolean getIsSold() {
