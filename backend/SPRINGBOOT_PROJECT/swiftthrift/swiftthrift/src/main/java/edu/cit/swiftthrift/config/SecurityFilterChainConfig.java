@@ -24,6 +24,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Arrays;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -96,16 +98,18 @@ public class SecurityFilterChainConfig {
 
     // Allow frontend (React/Kotlin mobile) to access APIs
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("*")); // Allow all origins (change to specific domains if needed)
-        config.setAllowedMethods(Collections.singletonList("*")); // GET, POST, PUT, DELETE, etc.
-        config.setAllowedHeaders(Collections.singletonList("*"));
-        config.setAllowCredentials(true); // Allow credentials (cookies, headers)
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Your React dev server
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setExposedHeaders(Arrays.asList("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        return source;
+
+        return new CorsFilter(source);
     }
 
     // Automatically create a new user when logging in with Google
