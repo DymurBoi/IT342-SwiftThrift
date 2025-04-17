@@ -2,7 +2,7 @@ package edu.cit.swiftthrift.service;
 
 import edu.cit.swiftthrift.entity.User;
 import edu.cit.swiftthrift.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -10,19 +10,25 @@ import java.util.*;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder  passwordEncoder;
 
     // Simulated token storage (use Redis or DB in prod)
     private final Map<String, String> resetTokens = new HashMap<>();
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("USER"); // Default role
+        System.out.println("Creating user: " + user.getEmail());
+        System.out.println("Raw password (before encoding): " + user.getPassword());
+
+        String encoded = passwordEncoder.encode(user.getPassword());
+        System.out.println("Encoded password: " + encoded);
+
+        user.setPassword(encoded);
+        user.setRole("ROLE_USER");
         return userRepository.save(user);
     }
 

@@ -9,16 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public UserController(UserService userService, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this. passwordEncoder= passwordEncoder;
     }
 
     // Create User
@@ -56,13 +58,30 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         try {
+            // Log the email and input password to verify what is being passed
+            System.out.println("Attempting login for email: " + loginRequest.getEmail());
+            System.out.println("Input password: " + loginRequest.getPassword());
+            System.out.println("Input password: " + loginRequest.getPassword());
+
+            // Authenticate the user
             User user = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+
+            // Log the user details for debugging
+            System.out.println("Authenticated user: " + user.getEmail());
+            System.out.println("DB password: " + user.getPassword());  // This should show the hashed password in DB
+
+            // Generate the token if authentication succeeds
             String token = jwtTokenProvider.generateToken(user);
+
+            // Prepare the response
             Map<String, Object> response = new HashMap<>();
             response.put("user", user);
             response.put("token", token);
+
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
+            // Catch any exceptions (e.g., invalid email or password) and log relevant details
+            System.out.println("Error during authentication: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
     }
