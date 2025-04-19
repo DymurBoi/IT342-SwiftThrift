@@ -22,10 +22,12 @@ public class Category {
 
 
     // Getters and Setters
-    public int getCategoryId() {
+    public Integer getCategoryId() {
         return categoryID;
     }
-
+    public void setCategoryId(Integer categoryId) {
+        this.categoryID = categoryId;
+    }
 
     public String getCategoryName() {
         return categoryName;

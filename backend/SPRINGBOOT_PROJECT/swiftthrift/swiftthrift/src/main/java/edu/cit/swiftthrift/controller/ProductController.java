@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,27 +26,19 @@ public class ProductController {
         this.fileStorageService = fileStorageService;
     }
 
-    // Create
-    @PostMapping("/upload/{productId}")
-    public ResponseEntity<?> uploadProductImages(
-      @PathVariable Integer productId,
-        @RequestParam("files") List<MultipartFile> files
-        ) {
-            try {
-                Product product = productService.getProductById(productId)
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
-
-                List<String> imageUrls = fileStorageService.saveFiles(files);
-                product.getImageUrls().addAll(imageUrls);
-
-                productService.createProduct(product);
-
-                return ResponseEntity.ok("Images uploaded successfully!");
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error uploading files: " + e.getMessage());
-                }
+    @PostMapping(value = "/create", consumes = "multipart/form-data")
+    public ResponseEntity<?> createProduct(
+            @RequestPart("product") Product product,  // Binding the 'product' JSON part
+            @RequestParam(value = "files", required = false) List<MultipartFile> files) {  // Binding the file(s) part
+        try {
+            Product createdProduct = productService.createProduct(product, files);
+            return ResponseEntity.ok(createdProduct);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed: " + e.getMessage());
+        }
     }
+
+
 
     // Read All
     @GetMapping("/all")
@@ -62,9 +55,20 @@ public class ProductController {
 
     // Update
     @PutMapping("/update/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable int productId, @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(productId, product);
-        return updatedProduct != null ? ResponseEntity.ok(updatedProduct) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateProduct(
+            @PathVariable int productId,
+            @RequestPart("product") Product product,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ) {
+        try {
+            Product updated = productService.updateProduct(productId, product, files);
+            return updated != null
+                    ? ResponseEntity.ok(updated)
+                    : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating product: " + e.getMessage());
+        }
     }
 
     // Delete
