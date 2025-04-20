@@ -20,7 +20,7 @@ class RegisterStep5 : Activity() {
                 return@setOnClickListener
             }
             (application as MyApplication).username = username.text.toString()
-            val intent = Intent(this,RegisterStep6::class.java)
+            val intent = Intent(this,RegisterStep6WithAPI::class.java)
             startActivity(intent)
         }
     }

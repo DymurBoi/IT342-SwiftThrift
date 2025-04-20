@@ -15,17 +15,19 @@ class RegisterStep1 : Activity() {
         val continueButton:Button=findViewById(R.id.button_continue)
         var fname:EditText=findViewById(R.id.editText_Fname)
         var lname:EditText=findViewById(R.id.editText_Lname)
-        val firstname=fname.text.toString()
-        val lastname=lname.text.toString()
-        val name="$firstname $lastname"
-        continueButton.setOnClickListener{
-            if(fname.text.toString().isNullOrEmpty() || lname.text.toString().isNullOrEmpty()){
-                Toast.makeText(this,"Fill out all the fields.",Toast.LENGTH_LONG).show()
+        continueButton.setOnClickListener {
+            val firstname = fname.text.toString()
+            val lastname = lname.text.toString()
+
+            if (firstname.isEmpty() || lastname.isEmpty()) {
+                Toast.makeText(this, "Fill out all the fields.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            (application as MyApplication).name = name
-            startActivity(Intent(this,RegisterStep2::class.java)
-            )
+
+            (application as MyApplication).fname = firstname
+            (application as MyApplication).lname = lastname
+
+            startActivity(Intent(this, RegisterStep2::class.java))
         }
     }
 }
