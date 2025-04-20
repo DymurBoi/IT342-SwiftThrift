@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="855dcb82-2577-4147-b7d0-c6b3e2fa343a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/SPRINGBOOT_PROJECT/swiftthrift/swiftthrift/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/SPRINGBOOT_PROJECT/swiftthrift/swiftthrift/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/SPRINGBOOT_PROJECT/swiftthrift/swiftthrift/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/SPRINGBOOT_PROJECT/swiftthrift/swiftthrift/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
