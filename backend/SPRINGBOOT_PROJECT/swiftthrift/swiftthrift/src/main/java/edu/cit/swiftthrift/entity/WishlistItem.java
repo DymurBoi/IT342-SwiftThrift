@@ -18,6 +18,15 @@ public class WishlistItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    public WishlistItem() {
+    }
+
+    // ✅ All-args constructor
+    public WishlistItem(Integer wishlistid, Wishlist wishlist, Product product) {
+        this.wishlistid = wishlistid;
+        this.wishlist = wishlist;
+        this.product = product;
+    }
     // Getters and Setters
     public Integer getwishlistid() {
         return wishlistid;

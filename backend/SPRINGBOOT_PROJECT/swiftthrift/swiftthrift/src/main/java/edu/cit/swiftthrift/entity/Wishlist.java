@@ -53,6 +53,17 @@ public class Wishlist {
     @OneToMany(mappedBy = "wishlist", cascade = CascadeType.ALL)
     private List<WishlistItem> wishlistItems = new ArrayList<>();
 
+    public Wishlist() {
+    }
+
+    // ✅ All-args constructor
+    public Wishlist(Integer wishlistId, Date addedAt, User user, List<WishlistItem> wishlistItems) {
+        this.wishlistId = wishlistId;
+        this.addedAt = addedAt;
+        this.user = user;
+        this.wishlistItems = wishlistItems;
+    }
+
     public List<WishlistItem> getWishlistItems() {
         return wishlistItems;
     }

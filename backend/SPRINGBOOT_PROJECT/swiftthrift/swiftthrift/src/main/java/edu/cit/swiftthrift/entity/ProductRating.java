@@ -1,5 +1,6 @@
 package edu.cit.swiftthrift.entity;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
@@ -19,13 +20,15 @@ public class ProductRating {
     private String name;
     private String comment;
     private int rating;
-    private Date date;
+    private LocalDate date;
 
-    public ProductRating(int productRatingId, String name, int rating, Date date, String comment) {
-        this.productRatingId = productRatingId;
+    public ProductRating(String name, String comment, Integer rating, LocalDate date, User user, Product product) {
         this.name = name;
+        this.comment = comment;
         this.rating = rating;
         this.date = date;
+        this.user = user;
+        this.product = product;
     }
 
     public int getProductRatingId() {
@@ -44,10 +47,10 @@ public class ProductRating {
     public void setRating(int rating) {
         this.rating = rating;
     }
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

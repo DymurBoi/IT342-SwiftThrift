@@ -34,14 +34,14 @@ public class WishlistItemController {
         return item.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-   /*  @PutMapping("/update/{wishlistItemid}")
+    @PutMapping("/update/{wishlistItemid}")
     public ResponseEntity<WishlistItem> update(@PathVariable Integer id, @RequestBody WishlistItem updatedItem) {
         Optional<WishlistItem> existing = wishlistItemService.getWishlistItemById(id);
         if (existing.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(wishlistItemService.updateWishlistItem(updatedItem));
-    }*/
+    }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         wishlistItemService.deleteWishlistItem(id);
         return ResponseEntity.ok().build();

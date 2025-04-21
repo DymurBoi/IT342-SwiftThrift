@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/storRatings")
+@RequestMapping("/api/storeRatings")
 public class StoreRatingController {
     @Autowired
     private StoreRatingService storeRatingService;
