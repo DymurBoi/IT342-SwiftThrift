@@ -1,9 +1,13 @@
 package edu.cit.swiftthrift.service;
 
 import edu.cit.swiftthrift.entity.User;
+import edu.cit.swiftthrift.entity.Cart;
+import edu.cit.swiftthrift.entity.Wishlist;
 import edu.cit.swiftthrift.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import edu.cit.swiftthrift.service.CartService;
+
 
 import java.util.*;
 
@@ -11,13 +15,18 @@ import java.util.*;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder  passwordEncoder;
+    private final CartService cartService;
+    private final WishlistService wishlistService;
 
     // Simulated token storage (use Redis or DB in prod)
     private final Map<String, String> resetTokens = new HashMap<>();
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       CartService cartService, WishlistService wishlistService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cartService = cartService;
+        this.wishlistService = wishlistService;
     }
 
     public User createUser(User user) {
@@ -25,12 +34,27 @@ public class UserService {
         System.out.println("Raw password (before encoding): " + user.getPassword());
 
         String encoded = passwordEncoder.encode(user.getPassword());
-        System.out.println("Encoded password: " + encoded);
-
         user.setPassword(encoded);
         user.setRole("ROLE_USER");
-        return userRepository.save(user);
+
+        // Save user first
+        User savedUser = userRepository.save(user);
+
+        // Create Cart for user
+        Cart cart = new Cart();
+        cart.setUser(savedUser);  // Set bidirectional relationship if needed
+        cart.setTotalPrice(0.0); // default
+        cartService.createCart(cart);
+
+        // Create Wishlist for user
+        Wishlist wishlist = new Wishlist();
+        wishlist.setUser(savedUser);
+        wishlist.setAddedAt(new Date());
+        wishlistService.createWishlist(wishlist);
+
+        return savedUser;
     }
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

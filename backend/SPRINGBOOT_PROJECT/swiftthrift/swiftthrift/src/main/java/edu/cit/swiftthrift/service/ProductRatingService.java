@@ -41,7 +41,7 @@ public class ProductRatingService {
 
         if (existingRatingOpt.isPresent()) {
             ProductRating existingRating = existingRatingOpt.get();
-            existingRating.setName(updatedRating.getName());
+            existingRating.setComment(updatedRating.getComment());
             existingRating.setRating(updatedRating.getRating());
             existingRating.setDate(updatedRating.getDate());
 

@@ -17,13 +17,15 @@ public class ProductRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productRatingId;
-    private String name;
     private String comment;
     private int rating;
     private LocalDate date;
 
-    public ProductRating(String name, String comment, Integer rating, LocalDate date, User user, Product product) {
-        this.name = name;
+
+    public ProductRating(){
+
+    }
+    public ProductRating(String comment, Integer rating, LocalDate date, User user, Product product) {
         this.comment = comment;
         this.rating = rating;
         this.date = date;
@@ -35,12 +37,7 @@ public class ProductRating {
         return productRatingId;
     }
 
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
+
     public int getRating() {
         return rating;
     }

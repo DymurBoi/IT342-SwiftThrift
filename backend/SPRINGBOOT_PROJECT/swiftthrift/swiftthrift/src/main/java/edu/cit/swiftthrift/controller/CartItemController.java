@@ -37,7 +37,7 @@ public class CartItemController {
     }
 
     // Update
-    @PutMapping("/put/{cartItemId}")
+    @PutMapping("/update/{cartItemId}")
     public CartItem updateCartItem(@PathVariable int cartItemId, @RequestBody CartItem cartItem) {
         CartItem existingCartItem = cartItemService.getCartItemById(cartItemId);
         
