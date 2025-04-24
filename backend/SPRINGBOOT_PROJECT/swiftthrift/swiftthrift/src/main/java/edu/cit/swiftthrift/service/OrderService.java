@@ -39,15 +39,32 @@ public class OrderService {
             order.setUser(user);
         }
 
-        // Ensure order items exist
+        double total = 0.0;
+
+        // Handle OrderItems
         if (order.getOrderItems() != null) {
-            for (OrderItem orderItem : order.getOrderItems()) {
-                orderItem.setOrder(order); // Set order reference
-                orderItemRepository.save(orderItem); // Save order item
+            for (OrderItem item : order.getOrderItems()) {
+                item.setOrder(order);
+                total += item.getSubtotal(); // Assuming subtotal is already calculated as quantity * price
             }
         }
 
-        return orderRepository.save(order);
+        order.setTotalPrice(total);
+        order.setStatus("PENDING"); // default status
+        order.setCreatedAt(new java.sql.Date(System.currentTimeMillis()));
+
+        // Save the order first (to generate ID for cascade)
+        Order savedOrder = orderRepository.save(order);
+
+        // Now save the order items with the generated order ID
+        if (order.getOrderItems() != null) {
+            for (OrderItem item : order.getOrderItems()) {
+                item.setOrder(savedOrder);
+                orderItemRepository.save(item);
+            }
+        }
+
+        return savedOrder;
     }
 
     public Order updateOrder(int id, Order order) {
@@ -55,30 +72,35 @@ public class OrderService {
 
         if (existingOrderOpt.isPresent()) {
             Order existingOrder = existingOrderOpt.get();
-            existingOrder.setTotalPrice(order.getTotalPrice());
-            existingOrder.setStatus(order.getStatus());
-            existingOrder.setCreatedAt(order.getCreatedAt());
 
-            // Update User if needed
+            if (order.getOrderItems() != null) {
+                List<OrderItem> updatedItems = order.getOrderItems();
+                double newTotal = 0.0;
+                for (OrderItem item : updatedItems) {
+                    item.setOrder(existingOrder);
+                    newTotal += item.getSubtotal();
+                    orderItemRepository.save(item);
+                }
+                existingOrder.setOrderItems(updatedItems);
+                existingOrder.setTotalPrice(newTotal);
+            }
+
             if (order.getUser() != null) {
                 User user = userRepository.findById(order.getUser().getUserId()).orElse(null);
                 existingOrder.setUser(user);
             }
 
-            // Update associated OrderItems
-            if (order.getOrderItems() != null) {
-                for (OrderItem orderItem : order.getOrderItems()) {
-                    OrderItem existingOrderItem = orderItemRepository.findById(orderItem.getOrderItemid()).orElse(null);
-                    if (existingOrderItem != null) {
-                        existingOrderItem.setOrder(existingOrder);
-                        orderItemRepository.save(existingOrderItem);
-                    }
-                }
-                existingOrder.setOrderItems(order.getOrderItems());
+            if (order.getStatus() != null) {
+                existingOrder.setStatus(order.getStatus());
+            }
+
+            if (order.getCreatedAt() != null) {
+                existingOrder.setCreatedAt(order.getCreatedAt());
             }
 
             return orderRepository.save(existingOrder);
         }
+
         return null;
     }
 
@@ -88,5 +110,18 @@ public class OrderService {
 
     public List<Order> getOrdersByUserId(Integer userId) {
         return orderRepository.findByUserUserId(userId);
+    }
+
+    public Order approveOrder(int orderId) {
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            if ("PENDING".equalsIgnoreCase(order.getStatus())) {
+                order.setStatus("ACCEPTED"); // or "COMPLETED" depending on your flow
+                return orderRepository.save(order);
+            }
+        }
+        return null;
     }
 }

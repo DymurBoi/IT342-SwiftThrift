@@ -32,9 +32,9 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityFilterChainConfig {
 
     private final UserRepository userRepository;
-
+    /*
     //For Production if needed
-   /*@Bean
+   @Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
        http
            .cors().and()
@@ -61,6 +61,7 @@ public class SecurityFilterChainConfig {
    
                // Only Admins can access admin endpoints
                .requestMatchers("/api/admins/**").hasRole("ADMIN")
+               .requestMatchers("api/orders/admin/**").hasRole("ADMIN")
    
                // All others require authentication
                .anyRequest().authenticated()

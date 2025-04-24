@@ -4,6 +4,7 @@ import edu.cit.swiftthrift.entity.Order;
 import edu.cit.swiftthrift.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,5 +55,16 @@ public class OrderController {
     public ResponseEntity<List<Order>> getOrdersByUserId(@PathVariable int userId) {
         List<Order> orders = orderService.getOrdersByUserId(userId);
         return ResponseEntity.ok(orders);
+    }
+
+    @PutMapping("/admin/{orderId}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Order> approveOrder(@PathVariable int orderId) {
+        Order approvedOrder = orderService.approveOrder(orderId);
+        if (approvedOrder != null) {
+            return ResponseEntity.ok(approvedOrder);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

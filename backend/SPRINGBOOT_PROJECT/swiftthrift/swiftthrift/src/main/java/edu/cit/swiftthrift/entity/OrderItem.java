@@ -16,7 +16,6 @@ public class OrderItem {
     private Integer orderItemid;
 
     private double subtotal;
- 
     // Getters and Setters
     public int getOrderItemid() {
         return orderItemid;
