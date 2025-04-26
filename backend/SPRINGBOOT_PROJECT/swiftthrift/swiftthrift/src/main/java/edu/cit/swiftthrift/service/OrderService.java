@@ -53,6 +53,11 @@ public class OrderService {
         order.setStatus("PENDING"); // default status
         order.setCreatedAt(new java.sql.Date(System.currentTimeMillis()));
 
+        // 🆕 Set delivery date (5 days after createdAt)
+        long fiveDaysInMillis = 5L * 24 * 60 * 60 * 1000;
+        java.sql.Date deliveryDate = new java.sql.Date(order.getCreatedAt().getTime() + fiveDaysInMillis);
+        order.setDeliveryDate(deliveryDate);
+
         // Save the order first (to generate ID for cascade)
         Order savedOrder = orderRepository.save(order);
 
@@ -74,6 +79,11 @@ public class OrderService {
             Order existingOrder = existingOrderOpt.get();
 
             if (order.getOrderItems() != null) {
+                // Remove old items
+                orderItemRepository.deleteAll(existingOrder.getOrderItems());
+                existingOrder.getOrderItems().clear();
+
+                // Add new items
                 List<OrderItem> updatedItems = order.getOrderItems();
                 double newTotal = 0.0;
                 for (OrderItem item : updatedItems) {
@@ -98,11 +108,16 @@ public class OrderService {
                 existingOrder.setCreatedAt(order.getCreatedAt());
             }
 
+            if (order.getDeliveryDate() != null) {
+                existingOrder.setDeliveryDate(order.getDeliveryDate());
+            }
+
             return orderRepository.save(existingOrder);
         }
 
         return null;
     }
+
 
     public void deleteOrder(int id) {
         orderRepository.deleteById(id);
