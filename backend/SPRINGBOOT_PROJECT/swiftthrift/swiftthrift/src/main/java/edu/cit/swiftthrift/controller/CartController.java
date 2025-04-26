@@ -37,6 +37,12 @@ public class CartController {
         return cartService.getCartById(cartId);
     }
 
+    // Read by userId
+    @GetMapping("/byUser/{userId}")
+    public Cart getCartByUserId(@PathVariable int userId) {
+        return cartService.getCartByUserId(userId);
+    }
+
     // Update
     @PutMapping("/update/{cartId}")
     public Cart updateCart(@PathVariable int cartId, @RequestBody Cart cart) {

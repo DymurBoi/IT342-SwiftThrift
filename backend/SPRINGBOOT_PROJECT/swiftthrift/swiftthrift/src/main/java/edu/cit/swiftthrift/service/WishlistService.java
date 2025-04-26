@@ -23,18 +23,24 @@ public class WishlistService {
     }
 
     public Wishlist createWishlist(Wishlist wishlist) {
-        return wishlistRepository.save(wishlist);
+        try {
+            return wishlistRepository.save(wishlist);
+        } catch (Exception e) {
+            System.err.println("Error creating wishlist: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public Wishlist updateWishlist(int id, Wishlist wishlist) {
         Optional<Wishlist> existingWishlistOpt = wishlistRepository.findById(id);
-    
+
         if (existingWishlistOpt.isPresent()) {
             Wishlist existingWishlist = existingWishlistOpt.get();
             existingWishlist.setAddedAt(wishlist.getAddedAt());
             return wishlistRepository.save(existingWishlist);
         }
-        return null; 
+        return null;
     }
 
     public boolean deleteWishlist(int id) {
@@ -46,6 +52,15 @@ public class WishlistService {
     }
 
     public List<Wishlist> getWishlistByUserId(Integer userId) {
-        return wishlistRepository.findByUserUserId(userId);
+        try {
+            System.out.println("Fetching wishlist for user ID: " + userId);
+            List<Wishlist> wishlists = wishlistRepository.findByUserUserId(userId);
+            System.out.println("Found " + wishlists.size() + " wishlists for user ID: " + userId);
+            return wishlists;
+        } catch (Exception e) {
+            System.err.println("Error getting wishlist by user ID: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

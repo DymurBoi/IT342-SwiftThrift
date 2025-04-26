@@ -32,9 +32,9 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityFilterChainConfig {
 
     private final UserRepository userRepository;
-    /*
+
     //For Production if needed
-   @Bean
+   /*@Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
        http
            .cors().and()
@@ -50,26 +50,25 @@ public class SecurityFilterChainConfig {
                .requestMatchers("/api/cartItem/**").permitAll()
                .requestMatchers("/api/categories/**").permitAll()
                .requestMatchers("/api/productRatings/**").permitAll()
-   
+
                // Allow anyone to view products
                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-   
+
                // Restrict create, update, delete to ADMIN only
                .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
                .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
                .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
-   
+
                // Only Admins can access admin endpoints
                .requestMatchers("/api/admins/**").hasRole("ADMIN")
-               .requestMatchers("api/orders/admin/**").hasRole("ADMIN")
-   
+
                // All others require authentication
                .anyRequest().authenticated()
            )
            .oauth2Login(oauth2 -> oauth2
                .successHandler(oAuth2SuccessHandler())
            );
-   
+
        return http.build();
    }*/
 
@@ -77,24 +76,24 @@ public class SecurityFilterChainConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors().and()
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/storeRatings/**").permitAll()
-                .requestMatchers("/api/users/**").permitAll()
-                .requestMatchers("/api/products/**").permitAll()
-                .requestMatchers("/api/orders/**").permitAll()
-                .requestMatchers("/api/wishlist/**").permitAll()
-                .requestMatchers("/api/admins/**").permitAll() 
-                .requestMatchers("/api/orderItem/**").permitAll() 
-                .requestMatchers("/api/cart/**").permitAll() 
-                .requestMatchers("/api/cartItem/**").permitAll() 
-                .requestMatchers("/api/categories/**").permitAll() 
-                .requestMatchers("/api/productRatings/**").permitAll() 
+                .cors().and()
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/storeRatings/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/products/**").permitAll()
+                        .requestMatchers("/api/orders/**").permitAll()
+                        .requestMatchers("/api/wishlist/**").permitAll()
+                        .requestMatchers("/api/admins/**").permitAll()
+                        .requestMatchers("/api/orderItem/**").permitAll()
+                        .requestMatchers("/api/cart/**").permitAll()
+                        .requestMatchers("/api/cartItem/**").permitAll()
+                        .requestMatchers("/api/categories/**").permitAll()
+                        .requestMatchers("/api/productRatings/**").permitAll()
 
-                .anyRequest().permitAll()
-            );
-            return http.build();
+                        .anyRequest().permitAll()
+                );
+        return http.build();
     }
 
     // Allow frontend (React/Kotlin mobile) to access APIs
@@ -102,7 +101,7 @@ public class SecurityFilterChainConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Your React dev server
+        config.addAllowedOrigin("http://localhost:3000"); // Specify exact origin instead of pattern when using allowCredentials
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setExposedHeaders(Arrays.asList("Authorization"));

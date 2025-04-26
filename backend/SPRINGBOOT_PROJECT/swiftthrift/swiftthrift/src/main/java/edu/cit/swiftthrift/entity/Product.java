@@ -3,6 +3,8 @@ package edu.cit.swiftthrift.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -18,6 +20,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "product")
+@JsonIgnoreProperties({"wishlistItems", "hibernateLazyInitializer"})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +35,6 @@ public class Product {
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")
     private List<String> imageUrls = new ArrayList<>();
- 
 
     // Constructors
     public Product() {}
@@ -42,11 +44,11 @@ public class Product {
         this.description = description;
         this.price = price;
         this.imageUrls = imageUrl;
-        this.itemCondition = itemCondition; 
+        this.itemCondition = itemCondition;
     }
 
-    
-     // Getters and Setters 
+
+    // Getters and Setters
     public Integer getCondition() {
         return itemCondition;
     }
@@ -104,14 +106,16 @@ public class Product {
     public void setImageUrls(List<String> imageUrls) {
         this.imageUrls = imageUrls;
     }
-   
+
 
     //Relationships
-     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = true) // Allow category_id to be null
+    @JsonIgnoreProperties({"products"})
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"product"})
     private List<ProductRating> productRatings = new ArrayList<>();
 
     // Getters and Setters
@@ -132,6 +136,7 @@ public class Product {
     }
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"product"})
     private List<WishlistItem> wishlistItems = new ArrayList<>();
 
     public List<WishlistItem> getWishlistItems() {

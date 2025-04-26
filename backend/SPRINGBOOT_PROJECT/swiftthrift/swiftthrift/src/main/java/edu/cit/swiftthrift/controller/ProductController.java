@@ -1,14 +1,12 @@
 package edu.cit.swiftthrift.controller;
 
 import edu.cit.swiftthrift.entity.Product;
-import edu.cit.swiftthrift.service.FileStorageService;
 import edu.cit.swiftthrift.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.io.IOException;
 import java.util.List;
@@ -18,22 +16,25 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private ProductService productService;
-    @Autowired
-    private final FileStorageService fileStorageService;
 
-    public ProductController(ProductService productServicem,FileStorageService fileStorageService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.fileStorageService = fileStorageService;
     }
 
     @PostMapping(value = "/create", consumes = "multipart/form-data")
     public ResponseEntity<?> createProduct(
-            @RequestPart("product") Product product,  // Binding the 'product' JSON part
-            @RequestParam(value = "files", required = false) List<MultipartFile> files) {  // Binding the file(s) part
+            @RequestPart("product") Product product,
+            @RequestParam(value = "files", required = false) List<MultipartFile> files) {
         try {
+            System.out.println("Received product: " + product);
+
             Product createdProduct = productService.createProduct(product, files);
             return ResponseEntity.ok(createdProduct);
+        } catch (RuntimeException e) {
+            System.err.println("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         } catch (IOException e) {
+            System.err.println("File upload error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed: " + e.getMessage());
         }
     }
@@ -43,7 +44,26 @@ public class ProductController {
     // Read All
     @GetMapping("/all")
     public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+        try {
+            List<Product> products = productService.getAllProducts();
+            System.out.println("Fetched " + products.size() + " products");
+
+            // Ensure we're returning a proper list/array
+            if (products.isEmpty()) {
+                return ResponseEntity.ok(products); // Return empty list
+            }
+
+            // Log details for debugging
+            for (Product product : products) {
+                System.out.println("Product: " + product.getProductId() + ", " + product.getName());
+            }
+
+            return ResponseEntity.ok(products);
+        } catch (Exception e) {
+            System.err.println("Error fetching products: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // Read by ID

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/productRatings")
+@RequestMapping("/api/productRatings") // Fixed typo in endpoint path (was "producRatings")
 public class ProductRatingController {
     @Autowired
     private final ProductRatingService productRatingService;

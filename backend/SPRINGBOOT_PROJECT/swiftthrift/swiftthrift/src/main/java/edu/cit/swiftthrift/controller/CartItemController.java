@@ -20,7 +20,7 @@ public class CartItemController {
 
     // Create
     @PostMapping("/create")
-    public CartItem createOrder(@RequestBody CartItem cartItem) {
+    public CartItem createCartItem(@RequestBody CartItem cartItem) {
         return cartItemService.createCartItem(cartItem);
     }
 
@@ -37,10 +37,10 @@ public class CartItemController {
     }
 
     // Update
-    @PutMapping("/update/{cartItemId}")
+    @PutMapping("/put/{cartItemId}")
     public CartItem updateCartItem(@PathVariable int cartItemId, @RequestBody CartItem cartItem) {
         CartItem existingCartItem = cartItemService.getCartItemById(cartItemId);
-        
+
         if (existingCartItem != null) {
             existingCartItem.setPrice(cartItem.getPrice());
             return cartItemService.createCartItem(existingCartItem);

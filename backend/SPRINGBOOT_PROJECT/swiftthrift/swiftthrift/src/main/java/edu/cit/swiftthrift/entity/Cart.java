@@ -3,6 +3,10 @@ package edu.cit.swiftthrift.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,16 +19,21 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cart")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "cartId")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cartId;
 
     private double totalPrice;
- 
+
     // Getters and Setters
     public int getCartId() {
         return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public double getTotalPrice() {
@@ -36,11 +45,12 @@ public class Cart {
     }
 
     //Relationships
-     @OneToOne
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIdentityReference(alwaysAsId = true)
     private User user;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 
     // Getters and Setters
@@ -59,7 +69,5 @@ public class Cart {
     public void setCartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
-
-
 }
 

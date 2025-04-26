@@ -1,47 +1,34 @@
 package edu.cit.swiftthrift.entity;
 
-import java.util.ArrayList;
+import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-
-@Table(name = "wishlist")
 @Entity
+@Table(name = "wishlist")
 public class Wishlist {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer wishlistId;
+    @Column(name = "wishlist_id") // Updated to match database column name
+    private Integer id;
 
-    private Date addedAt;
- 
-    // Getters and Setter
-
-    public int getId() {
-        return wishlistId;
-    }
-    public Date getAddedAt() {
-        return addedAt;
-    }
-    public void setAddedAt(Date addedAt) {
-        this.addedAt = addedAt;
-    }
-
-
-    // Relationships
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    // Getters and Setters
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "added_at")
+    private Date addedAt;
+
+    // Getters and setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public User getUser() {
         return user;
     }
@@ -50,26 +37,20 @@ public class Wishlist {
         this.user = user;
     }
 
-    @OneToMany(mappedBy = "wishlist", cascade = CascadeType.ALL)
-    private List<WishlistItem> wishlistItems = new ArrayList<>();
-
-    public Wishlist() {
+    public Date getAddedAt() {
+        return addedAt;
     }
 
-    // ✅ All-args constructor
-    public Wishlist(Integer wishlistId, Date addedAt, User user, List<WishlistItem> wishlistItems) {
-        this.wishlistId = wishlistId;
+    public void setAddedAt(Date addedAt) {
         this.addedAt = addedAt;
-        this.user = user;
-        this.wishlistItems = wishlistItems;
     }
 
-    public List<WishlistItem> getWishlistItems() {
-        return wishlistItems;
+    // Add this for backward compatibility if your frontend uses wishlistId
+    public Integer getWishlistId() {
+        return id;
     }
 
-    public void setWishlistItems(List<WishlistItem> wishlistItems) {
-        this.wishlistItems = wishlistItems;
+    public void setWishlistId(Integer id) {
+        this.id = id;
     }
-
 }

@@ -14,12 +14,16 @@ public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cartItemId;
- 
+
     private double price;
 
     // Getters and Setters
-    public int getCartId() {
+    public int getCartItemId() {
         return cartItemId;
+    }
+
+    public void setCartItemId(Integer cartItemId) {
+        this.cartItemId = cartItemId;
     }
 
     public double getPrice() {
@@ -29,9 +33,9 @@ public class CartItem {
     public void setPrice(double price) {
         this.price = price;
     }
- 
+
     //Relationships
-     @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
 
@@ -55,7 +59,4 @@ public class CartItem {
     public void setProduct(Product product) {
         this.product = product;
     }
-  
-
-    
 }

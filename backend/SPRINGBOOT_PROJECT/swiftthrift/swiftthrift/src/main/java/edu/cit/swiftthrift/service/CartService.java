@@ -6,9 +6,12 @@ import edu.cit.swiftthrift.entity.User;
 import edu.cit.swiftthrift.repository.CartRepository;
 import edu.cit.swiftthrift.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartService {
@@ -27,20 +30,39 @@ public class CartService {
         return cartRepository.findById(id).orElse(null);
     }
 
+    public Cart getCartByUserId(int userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            return user.getCart();
+        }
+        return null;
+    }
+
     public Cart createCart(Cart cart) {
-        // Ensure cart items are properly linked
+        if (cart.getUser() != null) {
+            // Fetch user
+            User user = userRepository.findById(cart.getUser().getUserId()).orElse(null);
+            if (user != null) {
+                // Check if user already has a cart
+                if (user.getCart() != null) {
+                    // Throw error if user already has a cart
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already has a cart.");
+                }
+                // Set the user to cart and cart to user
+                cart.setUser(user);
+                user.setCart(cart);
+            } else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User information is missing.");
+        }
+
+        // Set cart items if there are any
         if (cart.getCartItems() != null) {
             for (CartItem item : cart.getCartItems()) {
                 item.setCart(cart);
-            }
-        }
-        
-        // Ensure user is linked if provided
-        if (cart.getUser() != null) {
-            User user = userRepository.findById(cart.getUser().getUserId()).orElse(null);
-            if (user != null) {
-                cart.setUser(user);
-                user.setCart(cart); // Maintain bidirectional link
             }
         }
 

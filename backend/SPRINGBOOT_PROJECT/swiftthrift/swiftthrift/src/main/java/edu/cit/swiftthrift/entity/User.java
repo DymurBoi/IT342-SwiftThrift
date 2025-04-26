@@ -3,11 +3,16 @@ package edu.cit.swiftthrift.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "user")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 public class User {
 
     @Id
@@ -15,7 +20,7 @@ public class User {
     private Integer userId;
     private String fname;
     private String lname;
-    private String email; 
+    private String email;
     private String phoneNumber; // Optional field
     private String role; // Optional field
 
@@ -28,8 +33,8 @@ public class User {
     @Column(nullable = false)
     private String password; // Store hashed password
 
-   
-    
+
+
     public String getEmail() {
         return email;
     }
@@ -81,8 +86,8 @@ public class User {
     public void setLName(String lName) {
         this.lname = lName;
     }
-    
-    
+
+
     public String getFName() {
         return fname;
     }
@@ -92,7 +97,8 @@ public class User {
     }
 
     //Relationships
-      @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIdentityReference(alwaysAsId = true)
     private Cart cart;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)

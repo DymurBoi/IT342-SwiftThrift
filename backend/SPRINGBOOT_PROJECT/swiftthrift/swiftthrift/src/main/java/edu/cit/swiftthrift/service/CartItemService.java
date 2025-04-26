@@ -37,8 +37,13 @@ public class CartItemService {
             Cart cart = cartRepository.findById(cartItem.getCart().getCartId()).orElse(null);
             if (cart != null) {
                 cartItem.setCart(cart);
-                cart.getCartItems().add(cartItem); // Maintain bidirectional link
+                // Avoid duplicate add if already present
+                if (!cart.getCartItems().contains(cartItem)) {
+                    cart.getCartItems().add(cartItem); // Maintain bidirectional link
+                }
             }
+        } else {
+            throw new IllegalArgumentException("Cart is missing in CartItem.");
         }
 
         // Ensure cart item is linked to an existing product
