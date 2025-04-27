@@ -28,7 +28,7 @@ export default function LoginPage() {
     setSuccess("")
 
     try {
-      const response = await fetch("http://localhost:8080/api/users/login", {
+      const response = await fetch("https://swiftthrift-457008.as.r.appspot.com/api/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/signup", {
+      const response = await fetch("https://swiftthrift-457008.as.r.appspot.com/api/users/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

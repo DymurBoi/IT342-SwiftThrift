@@ -34,7 +34,7 @@ export default function CartPage() {
       try {
         setLoading(true)
         // Use the new endpoint to get the user's cart directly
-        const res = await axios.get(`http://localhost:8080/api/cart/byUser/${user.userId}`)
+        const res = await axios.get(`https://swiftthrift-457008.as.r.appspot.com/api/cart/byUser/${user.userId}`)
         if (res.data) {
           setCart(res.data)
           setCartItems(res.data.cartItems || [])
@@ -60,7 +60,7 @@ export default function CartPage() {
 
   const handleRemoveItem = async (cartItemId) => {
     try {
-      await axios.delete(`http://localhost:8080/api/cartItem/delete/${cartItemId}`)
+      await axios.delete(`https://swiftthrift-457008.as.r.appspot.com/api/cartItem/delete/${cartItemId}`)
       window.dispatchEvent(new Event("cartUpdated"))
     } catch (e) {
       setError("Failed to remove item.")
@@ -91,7 +91,7 @@ export default function CartPage() {
     }
     
     // If it's a relative URL, prepend the API base URL
-    return `http://localhost:8080${imageUrl}`;
+    return `https://swiftthrift-457008.as.r.appspot.com${imageUrl}`;
   };
 
   return (

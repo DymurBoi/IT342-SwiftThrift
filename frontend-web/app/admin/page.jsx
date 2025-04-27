@@ -1,53 +1,95 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
-import "../styles.css" // <-- Fix: use correct relative path
+import "../styles.css"
 
 export default function AdminPage() {
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [product, setProduct] = useState({ name: "", description: "", price: "" })
-  const [category, setCategory] = useState({ categoryName: "" })
+  const [categories, setCategories] = useState([])
+
+  const [product, setProduct] = useState({
+    name: "",
+    description: "",
+    price: "",
+    condition: '',
+    isSold: false,
+    category:{
+      categoryId: "",
+    },
+  })
+
   const [files, setFiles] = useState(null)
   const [error, setError] = useState("")
   const [activeTab, setActiveTab] = useState("product")
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [category, setCategory] = useState({ categoryName: "" })
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCategories()
+    }
+  }, [isAuthenticated])
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("https://swiftthrift-457008.as.r.appspot.com/api/categories/all")
+      setCategories(response.data)
+    } catch (error) {
+      console.error("Error fetching categories:", error)
+    }
+  }
 
   const handleSignIn = async () => {
     try {
       setError("")
-      const response = await axios.post("http://localhost:8080/api/admins/login")
+      const response = await axios.post("https://swiftthrift-457008.as.r.appspot.com/api/admins/login", {
+        username,
+        password,
+      })
       if (response.status === 200) {
         setIsAuthenticated(true)
       }
     } catch (error) {
-      setError("Login failed. Please try again.")
+      setError("Login failed. Please check your credentials.")
     }
   }
 
   const handleAddProduct = async () => {
     try {
       setError("")
-      if (!product.name || !product.description || !product.price) {
+      if (!product.name || !product.description || !product.price || !product.categoryId) {
         setError("Please fill in all product fields.")
         return
       }
 
+      const payload = {
+        name: product.name,
+        description: product.description,
+        price: parseFloat(product.price),
+        condition: parseInt(product.condition),
+        isSold: product.isSold,
+        category: {
+          categoryId: parseInt(product.categoryId),
+        },
+      }
+    
       const formData = new FormData()
-      formData.append("product", new Blob([JSON.stringify(product)], { type: "application/json" }))
+      formData.append("product", new Blob([JSON.stringify(payload)], { type: "application/json" }))
       if (files) {
         Array.from(files).forEach((file) => formData.append("files", file))
       }
 
-      await axios.post("http://localhost:8080/api/products/create", formData, {
+      await axios.post("https://swiftthrift-457008.as.r.appspot.com/api/products/create", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
-      alert("Product added successfully!")
-      setProduct({ name: "", description: "", price: "" })
-      setFiles(null)
 
-      // Trigger re-fetch of products on the ProductsPage
+      alert("Product added successfully!")
+      setProduct({ name: "", description: "", price: "", itemCondition: 0, categoryId: "" })
+      setFiles(null)
       window.dispatchEvent(new Event("productsUpdated"))
     } catch (error) {
       console.error("Error adding product:", error.response?.data || error.message)
@@ -63,9 +105,10 @@ export default function AdminPage() {
         return
       }
 
-      await axios.post("http://localhost:8080/api/categories/create", category)
+      await axios.post("https://swiftthrift-457008.as.r.appspot.com/api/categories/create", category)
       alert("Category added successfully!")
       setCategory({ categoryName: "" })
+      fetchCategories() // Refresh the dropdown
     } catch (error) {
       setError("Error adding category: " + (error.response?.data?.message || error.message))
     }
@@ -74,21 +117,8 @@ export default function AdminPage() {
   if (!isAuthenticated) {
     return (
       <div className="container">
-        <nav className="navbar">
-          <div className="logo">Swiftthrift</div>
-          <ul className="nav-links">
-            <li>
-              <a onClick={() => router.push("/")}>Dashboard</a>
-            </li>
-            <li>
-              <a onClick={() => router.push("/products")}>Products</a>
-            </li>
-            <li>
-              <a onClick={() => router.push("/about")}>About Us</a>
-            </li>
-          </ul>
-        </nav>
-
+        {/* Navigation and Login Form */}
+        {/* (Same as before, you can keep your navbar and footer) */}
         <div className="auth-container">
           <div className="auth-forms">
             {error && <div className="error-message">{error}</div>}
@@ -101,48 +131,41 @@ export default function AdminPage() {
             >
               <h2>Admin Login</h2>
               <p className="form-description">Sign in to access the admin dashboard</p>
+
+              <div className="form-group">
+                <label htmlFor="username">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                />
+              </div>
+
               <button type="submit" className="submit-btn">
-                Login (Demo Mode)
+                Login
               </button>
-              <p className="form-note">
-                Note: NEED PA LOG IN AND PASSWORD FOR DEMO RANII
-              </p>
             </form>
           </div>
         </div>
-
-        <footer className="footer">
-          <p>&copy; 2025 Swiftthrift. All rights reserved.</p>
-        </footer>
       </div>
     )
   }
 
   return (
     <div className="container">
-      <nav className="navbar">
-        <div className="logo">Swiftthrift Admin</div>
-        <ul className="nav-links">
-          <li>
-            <a onClick={() => router.push("/")}>Dashboard</a>
-          </li>
-          <li>
-            <a onClick={() => router.push("/products")}>Products</a>
-          </li>
-          <li>
-            <a onClick={() => router.push("/orders")}>Orders</a>
-          </li>
-          <li>
-            <a onClick={() => router.push("/users")}>Users</a>
-          </li>
-        </ul>
-        <div className="auth-links">
-          <button onClick={() => setIsAuthenticated(false)} className="logout-btn">
-            Logout
-          </button>
-        </div>
-      </nav>
-
       <div className="dashboard">
         <div className="welcome-section">
           <h1>Admin Dashboard</h1>
@@ -180,6 +203,7 @@ export default function AdminPage() {
                   onChange={(e) => setProduct({ ...product, name: e.target.value })}
                 />
               </div>
+
               <div className="form-group">
                 <label htmlFor="product-description">Description</label>
                 <textarea
@@ -190,6 +214,7 @@ export default function AdminPage() {
                   rows="4"
                 ></textarea>
               </div>
+
               <div className="form-group">
                 <label htmlFor="product-price">Price</label>
                 <input
@@ -200,6 +225,35 @@ export default function AdminPage() {
                   onChange={(e) => setProduct({ ...product, price: e.target.value })}
                 />
               </div>
+
+              <div className="form-group">
+                <label htmlFor="item-condition">Condition</label>
+                <select
+                  id="item-condition"
+                  value={product.condition}
+                  onChange={(e) => setProduct({ ...product, itemCondition: e.target.value })}
+                >
+                  <option value="0">New</option>
+                  <option value="1">Used</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="category">Category</label>
+                <select
+                  id="category"
+                  value={product.categoryId}
+                  onChange={(e) => setProduct({ ...product, categoryId: e.target.value })}
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.categoryId} value={cat.categoryId}>
+                      {cat.categoryName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="form-group">
                 <label htmlFor="product-images">Product Images</label>
                 <div className="file-input-container">
@@ -213,6 +267,7 @@ export default function AdminPage() {
                   <div className="file-input-label">{files ? `${files.length} file(s) selected` : "Choose files"}</div>
                 </div>
               </div>
+
               <button onClick={handleAddProduct} className="submit-btn">
                 Add Product
               </button>
