@@ -28,7 +28,7 @@
 
 ## **Developer's Profile**
 # **Team Members:**
-# **Team Members:**
+
 **Member 1** <br>
 **Name:** Dymur Dame S. Maquiling <br>
 **Course:** BSIT-3 <br>
