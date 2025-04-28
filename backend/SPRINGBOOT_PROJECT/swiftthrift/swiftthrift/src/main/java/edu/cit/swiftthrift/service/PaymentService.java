@@ -28,7 +28,7 @@ public class PaymentService {
 
     @PostConstruct
     public void init() {
-        Stripe.apiKey = "your-stripe-secret-key"; // TODO: set your Stripe Secret Key here
+        Stripe.apiKey = "sk_test_51RHvE5HX4UZcHBXUn0XzOoFaIxxJ566pvSbJvnZoMyeVpFHVf1yC6Sqzy0yO3pan1Ak7JusJelazVcoUHPZiTnfK00rG6uZX81";
     }
 
     @Transactional
