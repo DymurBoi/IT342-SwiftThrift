@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:padding="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StartingPage"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SwiftThrift"
+        android:textColor="@color/black"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="500dp" />
+
+    <Button
+        android:id="@+id/button_continue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue with email"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/black"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="20dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/textView_haveAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Already have an account?"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="5dp"
+        />
+
+    <TextView
+        android:id="@+id/textView_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:clickable="true"
+        android:focusable="true" />
+
+    </LinearLayout>
+</LinearLayout>
